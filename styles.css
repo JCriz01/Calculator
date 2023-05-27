@@ -23,7 +23,7 @@ h2{
 .calculator-Body{
     width: 400px;
     height: 440px;
-    border: solid red;
+    border: 7px solid grey;
     background-color: #2d2b2b;;
     padding: 15px 0 15px 15px;
 }
