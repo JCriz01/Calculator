@@ -13,9 +13,13 @@ function multiply(a,b){
     return a * b;
 }
 
-//functoin to divide two operators.
+//function to divide two operators.
 function divide(a,b){
-    return a/b;
+    if(b==0){
+        return null;
+    } 
+    else
+        return a/b;
 }
 
 //function to calculate 2 operands and one operator
@@ -51,19 +55,43 @@ function deleteArray(array){
     return array;
 }
 
+//function that will return a number that will be used to iterate over a expression that will replace
+//higher order of operations into a more simple expression that can be read from left to right.
+function orderOfOperationsCount(array){
+
+    let divisionCount=0;
+    let multiplicationCount=0;
+
+    for(let i=0; i < array.length; i++){
+        if(array[i]==='*'){
+            multiplicationCount++;
+        }
+        else if(array[i]==='/')
+            divisionCount++;
+
+    }
+    return multiplicationCount + divisionCount;
+}
+
+
 function calculateExpression(arrayExpression){
 
     let index=0;
 
-    let total=0;
+    let total=orderOfOperationsCount(arrayExpression);
 
-    while(arrayExpression[1]==='='){
+    while(arrayExpression.length >1){
 
+        for(let i=0; i < total; i++){
+            arrayExpression=OOP_Reduction(arrayExpression);
+        }
         
         numberOne=Number(arrayExpression[0]);
         arrayExpression.shift();
       
 
+        if(arrayExpression[0]=='=')
+            return numberOne;
         operator=arrayExpression[0];
         arrayExpression.shift();
         
@@ -75,6 +103,8 @@ function calculateExpression(arrayExpression){
         
         let StringNumber=operate(numberOne,operator,numberTwo);
         arrayExpression.unshift(  StringNumber.toString() );
+
+        
     }
     
     return Number(arrayExpression[0]);
@@ -82,40 +112,133 @@ function calculateExpression(arrayExpression){
 }
 
 //function to test for operator hiearchy
-function testing(array){
+function OOP_Reduction(array){
 
     //finding the index of a multiplication or division
-    let operatorIndex=array.indexOf('*');
+    let multiplicationIndex=array.indexOf('*');
     let divisionIndex=array.indexOf('/');
 
-    if(operatorIndex < divisionIndex){
-        numberOne=Number(array[operatorIndex-1]);
-        array[operatorIndex-1]='!';
-      
 
-        operator=array[operatorIndex];
-        array[operatorIndex]='!';
-        
+    //if multiplication AND division is found in the expression
+    if (divisionIndex !==-1 && multiplicationIndex !==-1){
 
-        
-        numberTwo=Number(array[operatorIndex+1]);
-        array[operatorIndex+1]='!';
+        //order of operations is from left to right if they are of the same order, ie *,/.
+        //in this case, multiplication is before division.
+        if(multiplicationIndex < divisionIndex){
+            numberOne=Number(array[multiplicationIndex-1]);
+            array[multiplicationIndex-1]='!';
+          
+    
+            operator=array[multiplicationIndex];
+            array[multiplicationIndex]='!';
             
-        
+    
+            
+            numberTwo=Number(array[multiplicationIndex+1]);
+            array[multiplicationIndex+1]='!';
+                
+            
+            let StringNumber=operate(numberOne,operator,numberTwo);
+            
+            array=array.filter( item=>{
+                if(item != '!')
+                    return item;
+            });
+            array.splice(multiplicationIndex-1,0,StringNumber);
+    
+            return array;
+        }
+
+        //division is found before multiplication
+        else if(divisionIndex < multiplicationIndex){
+
+            numberOne=Number(array[divisionIndex-1]);
+            array[divisionIndex-1]='!';
+          
+    
+            operator=array[divisionIndex];
+            array[divisionIndex]='!';
+            
+    
+            
+            numberTwo=Number(array[divisionIndex+1]);
+            array[divisionIndex+1]='!';
+                
+            
+            let StringNumber=operate(numberOne,operator,numberTwo);
+            
+            array=array.filter( item=>{
+                if(item != '!')
+                    return item;
+            });
+
+            array.splice(divisionIndex-1,0,StringNumber);
+    
+            return array;
+        }
+
+    }
+
+    //if multiplication is only found in the expression
+    else if(multiplicationIndex !==-1){
+        numberOne=Number(array[multiplicationIndex-1]);
+        array[multiplicationIndex-1]='!';
+          
+    
+        operator=array[multiplicationIndex];
+        array[multiplicationIndex]='!';
+            
+    
+            
+        numberTwo=Number(array[multiplicationIndex+1]);
+        array[multiplicationIndex+1]='!';
+                
+            
         let StringNumber=operate(numberOne,operator,numberTwo);
-        
-        let arrayLength=array.length-3;
-        let primeIndex=operatorIndex-1;
+            
         array=array.filter( item=>{
             if(item != '!')
                 return item;
-        } );
+            });
+    
 
-        array.unshift(  StringNumber.toString() );
+        array.splice(multiplicationIndex-1,0,StringNumber);
+    
+        return array;
     }
+    //if division is only found in the expression
+    else if(divisionIndex !== -1){
+
+        numberOne=Number(array[divisionIndex-1]);
+        array[divisionIndex-1]='!';
+          
+    
+        operator=array[divisionIndex];
+        array[divisionIndex]='!';
+            
+    
+            
+        numberTwo=Number(array[divisionIndex+1]);
+                array[divisionIndex+1]='!';
+                
+            
+        let StringNumber=operate(numberOne,operator,numberTwo);
+            
+        array=array.filter( item=>{
+            if(item != '!')
+                return item;
+        });
+
+        array.splice(divisionIndex-1,0,StringNumber);
+    
+        return array;
+
+    }
+    //no division and multiplication is found in the expression
+    else
+        return array;
 
 }
-
 
 function evaluateExpressions(arrayString){
     let expression='';//the parameter is an array, this string will concatenate it into a long string
@@ -193,12 +316,12 @@ function evaluateExpressions(arrayString){
 //function that will handle every button click that the user presses on the calculators keypad
 function buttonHandler(string){
 
-    console.log(`display string: ${string}`);
+    //console.log(`display string: ${string}`);
     if(string==='Clear'){
         outputMessage.textContent='';
         expressionString='';
         arrayStack=deleteArray(arrayStack);
-        console.log(`arrayStack: ${arrayStack}`);
+        //console.log(`arrayStack: ${arrayStack}`);
         mathematicsOperationStack =deleteArray(mathematicsOperationStack);
     }
     else if(string==='.'){
@@ -208,38 +331,29 @@ function buttonHandler(string){
             if(expressionString[i] =='.'){
                 expressionString='ERROR';
                 arrayStack=deleteArray(arrayStack);
+                mathematicsOperationStack=deleteArray(mathematicsOperationStack);
                 outputMessage.textContent=expressionString;
                 expressionString='';
             }
         }
         expressionString+=string;
         arrayStack.push(string);
+        
         outputMessage.textContent+=string;
         
     }
+    
     else{
-
-
-        if(string==='+'){
-            //let tempString=expressionString;
-            //for(let i=expressionString.length; i>=0; i++ ){
-            //
-            //}
-            //mathematicsOperationStack.push(expressionString);
-            //console.log(`math stack: ${mathematicsOperationStack}`);
-            //mathematicsOperationStack.push(arrayStack[arrayStack.indexOf('+')]);
-        }
 
         if(string==='='){
 
             arrayStack.push(string);
             total=evaluateExpressions(arrayStack);
-            outputMessage.textContent=total;
-            //uncomment if function does not work.
-            //for(let i=0;i<expressionString.length; i++){
-            //    if(expressionString[i] !=='=')
-            //        string+=arrayString[i];
-            //}
+
+            if(total !==null)
+                outputMessage.textContent=total;
+           else
+                outputMessage.textContent='Not on my watch!';
             
         }
         else{
@@ -263,14 +377,12 @@ outputMessage.textContent='';
 
 const buttons=parentElement.querySelectorAll('button');
 
-
+//iterating over the buttons on the calculator
 buttons.forEach((buttonItem)=>{
     buttonItem.addEventListener('click',()=>{
         console.log(buttonItem.textContent);
         let calcBtnStr=buttonItem.textContent;
-        buttonHandler(calcBtnStr);
+        buttonHandler(calcBtnStr);//calling function that will handle the logic for the math
 
     });
 });
-
-let thisisatestforgithub='this is a test for pull requests';
