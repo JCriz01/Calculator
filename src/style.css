@@ -1,31 +1,41 @@
 html{
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: fit-content;
   margin-top: 50px;
+  height: 100%;
+
 }
 
 body{
+  flex-direction: column;
   display: flex;
   align-self: center;
+  background-color: #EFD9CE;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 
 }
 button{
   height: 60px;
   width: 90px;
+
 }
 h2{
   margin: 0px;
 }
 
 .calculator-Body{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 400px;
-  height: 440px;
+  height: 455px;
   border: 7px solid grey;
   background-color: #2d2b2b;;
   padding: 15px 0 15px 15px;
+  border-radius: 12px;
+  align-self: center;
 }
 
 .output-box{
@@ -59,6 +69,12 @@ h2{
 .keypad-layout{
   display: flex;
   justify-content: center;
+
+}
+
+.keypad-layout button{
+  font-size: 24px;
+  font-family: 'Roboto', sans-serif;
 }
 
 
@@ -66,18 +82,17 @@ h2{
   display: flex;
   flex-wrap: wrap;
   flex-shrink: 1;
+  gap: 6px;
 }
 
 
 .operation-layout{
-  width: 380px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .operation-layout button{
   height: 48px;
   width: 80px;
 }
-
-
-
-
