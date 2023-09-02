@@ -1,29 +1,29 @@
 //function to add two operators
-function add( a: number, b: number){
+function add( a: number, b: number): number{
     return a + b;
 }
   
   //function to subtract two operators
-function subtract(a: number , b: number){
-    return a-b;
+function subtract(a: number , b: number): number{
+    return a - b;
 }
   
   //function to multiply two operators
-function multiply(a: number,b: number){
+function multiply(a: number,b: number): number{
     return a * b;
 }
   
   //function to divide two operators.
-function divide(a: number,b: number){
+function divide(a: number,b: number): number | undefined{
     if(b==0){
-        return null;
+        return undefined;
     } 
     else
         return a/b;
 }
 
 //function to calculate 2 operands and one operator
-function operate(num1: number, operator: string, num2: number){
+function operate(num1: number, operator: string, num2: number): number | undefined{
 
     if(operator==='+'){
         return add(num1,num2);
@@ -63,8 +63,8 @@ let numberOne,numberTwo=0;
 let operator='';
 
   
-  //function to test for operator hiearchy
-  function OOP_Reduction(array: string[]){
+//function to test for operator hiearchy
+function OOP_Reduction(array: string[]){
   
     //finding the index of a multiplication or division
     let multiplicationIndex=array.indexOf('*');
@@ -190,11 +190,10 @@ let operator='';
     else
         return array;
   
-  }
+}
 
-  export function calculateExpression(arrayExpression: any[]): number{
 
-    let index=0;
+export function calculateExpression(arrayExpression: any[]): number{
   
     let total=orderOfOperationsCount(arrayExpression);
   
@@ -223,8 +222,6 @@ let operator='';
         arrayExpression.unshift(  StringNumber.toString() );
   
         
-    }
-    
+    } 
     return Number(arrayExpression[0]);
-    
-  }
+}

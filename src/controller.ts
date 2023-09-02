@@ -1,11 +1,14 @@
 import { calculateExpression } from "./calculator";
 
 let expressionString='';
+
+//array will contain strings that will be mixed of operators and operands
 let calcQueue: string[]=[];
+//this array will have numbers and operands
 let mathematicsOperationsArray: string[]=[];
 
 
-const parentElement: HTMLDivElement| null=document.querySelector('.calculator-Body');
+//const parentElement: HTMLDivElement| null=document.querySelector('.calculator-Body');
 
 
 const outputMessage=document.querySelector('.output-box')!.children[0];
@@ -18,10 +21,14 @@ function deleteArray(array: string[]){
         array.shift();
     }
     return array;
-  }
+}
 
+//this function will concatenate individual numbers into proper form.
+//for example ['1,'3','+',1','5','='] to ['13','+','15'] 
 function evaluateExpressions(arrayString: string[] ): number{
+
     let expression='';//the parameter is an array, this string will concatenate it into a long string
+
     let firstNumberString='';
     let secondNumberString='';
     let total=0;
@@ -70,15 +77,14 @@ function evaluateExpressions(arrayString: string[] ): number{
             if(arrayString[index]==='='){
                 mathematicsOperationsArray.push(expression);
                 mathematicsOperationsArray.push('=');
-                console.log(`math stack ${mathematicsOperationsArray}`);
+                console.log(`math stack is ${mathematicsOperationsArray}`);
   
-                console.log('Expression here is done, the rest DO NOT MATTER   IGNORE THEM');
+                console.log('Done with the calcuation(pressed =)');
   
-                return calculateExpression(mathematicsOperationsArray);
-  
-                
+                return calculateExpression(mathematicsOperationsArray);   
             }
             else{
+                
                 expression+=arrayString[index];
                 indexCount+=1;
                 console.log(`Index ${index}, expression is: ${expression}`);
@@ -87,8 +93,9 @@ function evaluateExpressions(arrayString: string[] ): number{
   
   
         }
+
     }
-  }
+}
   
 
 //function that will handle every button click that the user presses on the calculators keypad
@@ -120,28 +127,55 @@ export function buttonHandler(string: string){
         outputMessage.textContent+=string;
         
     }
+    else if(string==='='){
+
+        //pushing string to queue
+        calcQueue.push(string);
+
+        let total=evaluateExpressions(calcQueue);
+
+        calcQueue=deleteArray(calcQueue);
+        calcQueue.push("" + total);
+
+        mathematicsOperationsArray=deleteArray(mathematicsOperationsArray);
+        console.log(`The total is ${total}, the calculation queue is ${calcQueue}`);
+        if(total !== null)
+            outputMessage.textContent=""+total;
+        else
+            outputMessage.textContent='Not on my watch!';
+        
+    }
     
+    //the button that is clicked is a regular operand and operator(minus the '=')
     else{
+        outputMessage.textContent+=string;
+        expressionString+=string;
   
-        if(string==='='){
+        calcQueue.push(string);
+        console.log(`Calculation Queue is: ${calcQueue}`);
   
-            calcQueue.push(string);
-            let total=evaluateExpressions(calcQueue);
-  
-            if(total !==null)
-                outputMessage.textContent=""+total;
-           else
-                outputMessage.textContent='Not on my watch!';
-            
-        }
-        else{
-            outputMessage.textContent+=string;
-            expressionString+=string;
-  
-            calcQueue.push(string);
-            console.log(`Calculation Queue is: ${calcQueue}`);
-  
-        }
     }
   
-  }
+}
+
+//starting point of the program
+export function start(){
+    const parentElement: HTMLDivElement| null=document.querySelector('.calculator-Body');
+
+
+    const buttons=parentElement!.querySelectorAll('button');
+
+    const calculatorBody: HTMLDivElement=document.querySelector('.calculator-Body');
+
+    calculatorBody.addEventListener('click',(Event: Event)=>{
+        let target=Event.target;
+
+        if(target.localName=='button'){
+            console.log(target.textContent);
+
+            let calcBtnString=target.textContent;
+            buttonHandler(calcBtnString);
+        }
+
+    });
+}
