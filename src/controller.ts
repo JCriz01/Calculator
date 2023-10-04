@@ -1,4 +1,4 @@
-import { calculateExpression } from "./calculator";
+import { calculateExpression } from "./calculator.ts";
 
 let expressionString='';
 

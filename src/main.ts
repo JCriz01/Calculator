@@ -1,4 +1,4 @@
 import './style.css';
-import { start } from './controller';
+import { start } from './controller.ts';
 
 start();
